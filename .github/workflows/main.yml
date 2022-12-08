@@ -40,7 +40,5 @@ jobs:
             - [更新日志](https://github.com/Harlan-H/M3u8Downloader_H.Plugins/blob/master/Changelog.md)
           draft: false
           prerelease: false
-          name: ${{ github.event.inputs.version }}
-          tag_name: ${{ github.event.inputs.version }}
           files:  release/*.zip
               
