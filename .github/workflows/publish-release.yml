@@ -1,11 +1,11 @@
-name: main
+name: publish-release
 
 on: 
-  push:
-    branches:
-      - master
-    tags:
-      - "*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号'
+        required: true
         
 jobs:
   build:
@@ -33,7 +33,6 @@ jobs:
           ./buildall.sh release
         
       - name: Create release
-        if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
         uses: softprops/action-gh-release@v1
         with:
           body: |
