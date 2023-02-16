@@ -2,8 +2,10 @@
 using M3u8Downloader_H._555dd7.plugin.Utils;
 using M3u8Downloader_H.Common.Extensions;
 using Newtonsoft.Json;
+using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace M3u8Downloader_H._555dd7.plugin.Streams
 {
@@ -12,9 +14,10 @@ namespace M3u8Downloader_H._555dd7.plugin.Streams
         private readonly HttpClient httpClient;
         private readonly IEnumerable<KeyValuePair<string, string>>? headers;
         private static readonly Regex regex = new("player_aaaa=(.*?)</script>", RegexOptions.Compiled);
-        private static readonly Regex wssRegex = new("'(wss://.*?)'", RegexOptions.Compiled);
-        private static readonly byte[] _key = Encoding.UTF8.GetBytes("55ca5c48a943afdc");
-        private static readonly byte[] _iv = Encoding.UTF8.GetBytes("d11424dcecfe16c0");
+        private static readonly Regex serverUrlRegex = new("'(https://.*?)'", RegexOptions.Compiled);
+        private static readonly byte[] _key = Encoding.UTF8.GetBytes("55cc5c42a943afdc");
+        private static readonly byte[] _iv = Encoding.UTF8.GetBytes("d11324dcscfe16c0");
+        private static readonly string _hmacRawKey = "55ca5c4d11424dcecfe16c08a943afdc";
 
         public Extractor(HttpClient httpClient, IEnumerable<KeyValuePair<string, string>>? headers)
         {
@@ -26,31 +29,44 @@ namespace M3u8Downloader_H._555dd7.plugin.Streams
         {
             Uri uri = videoId;
             var url = await GetMainPageUrl(uri, cancellationToken);
-            var encryptedData = GetEncryptData(new(url));
-            var wssUrl = await GetWssAddress(uri,cancellationToken);
-            var recvBytes = await SendData(new Uri(wssUrl), encryptedData.ToBytes(), cancellationToken);
-            return GetPlayUrl(recvBytes);
+            var serverUrl = await GetServerUrl(uri,cancellationToken);
+            return await GetPlayUrlFromServerUrl(url,serverUrl,cancellationToken);
         }
 
-        private static Uri GetPlayUrl(byte[] bytes)
+        private async Task<Uri> GetPlayUrlFromServerUrl(string mainpageUrl, string serverUrl, CancellationToken cancellationToken)
         {
-            var decryptText = bytes.AesDecrypt(_key, _iv).GetString();
+            var tmpHeaders = GetPlayerUrlHeaders(mainpageUrl, serverUrl);
+            tmpHeaders.TryGetValue("User-Agent", out string? useragent);
+            Uri RequestUri = new PlayerRequest(serverUrl, useragent ?? "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36");
+            var encryptedResp = await httpClient.GetStringAsync(RequestUri, tmpHeaders, cancellationToken);
+            var decryptText = encryptedResp.ToHexBytes().AesDecrypt(_key, _iv).GetString();
             var r = JsonConvert.DeserializeObject<Response>(decryptText);
             if (r is null)
                 throw new InvalidDataException("返回内容序列化失败");
 
             if (r.Code != 200)
-                throw new InvalidDataException($"数据返回异常,错误:{r.Msg}");
+                throw new InvalidDataException($"数据返回异常,错误内容:{r.Msg}");
 
-            return r.Url;
+            return r.Data!.Url;
         }
 
-        private static async Task<byte[]> SendData(Uri wssuri, byte[] buffer, CancellationToken cancellationToken)
+        private Dictionary<string, string> GetPlayerUrlHeaders(string url,string serverurl)
         {
-            using WebSocketClient webSocketClient = new();
-            var wsResp = await webSocketClient.SendAsync(wssuri, buffer, cancellationToken);
-            return wsResp.GetString().ToHexBytes();
+            Dictionary<string, string> tmpHeaders = headers is not null ? new Dictionary<string, string>(headers) : new();
+            long now = DateTimeOffset.Now.ToLocalTime().ToUnixTimeSeconds();;
+            string SecondString = Convert.ToString(now);
+            tmpHeaders.Add("X-PLAYER-TIMESTAMP", SecondString);
+            tmpHeaders.Add("X-PLAYER-METHOD", "GET");
+
+            var encryptedUrl = url.ToBytes().AesEncrypt(_key, _iv).GetHexString();
+            tmpHeaders.Add("X-PLAYER-PACK", encryptedUrl);
+
+            var hmacKeyBytes = (serverurl + "GET" + SecondString + _hmacRawKey).GetMD5HexString().ToLower().ToBytes();
+            byte[] encryptData  = encryptedUrl.ToBytes().HmacSha256(hmacKeyBytes);
+            tmpHeaders.Add("X-PLAYER-SIGNATURE", Convert.ToHexString(encryptData).ToLower());
+            return tmpHeaders;
         }
+
 
         private async Task<string> GetMainPageUrl(Uri uri, CancellationToken cancellationToken)
         {
@@ -63,16 +79,16 @@ namespace M3u8Downloader_H._555dd7.plugin.Streams
             return playerInfo.Url;
         }
 
-        private async Task<string> GetWssAddress(Uri baseUri, CancellationToken cancellationToken = default)
+        private async Task<string> GetServerUrl(Uri baseUri, CancellationToken cancellationToken = default)
         {
             Uri uri = new(baseUri, "/player.html");
             var raw = await httpClient.GetStringAsync(uri, headers, cancellationToken);
-            var wssGroups = wssRegex.Matches(raw);
-            if (wssGroups.Count < 2)
-                throw new InvalidDataException("wss地址获取失败");
+            var urlGroups = serverUrlRegex.Matches(raw);
+            if (urlGroups.Count < 2)
+                throw new InvalidDataException("server url地址获取失败");
 
-            var randomNum = new Random().Next(wssGroups.Count);
-            return wssGroups[randomNum].Groups[1].Value;
+            var randomNum = new Random().Next(urlGroups.Count);
+            return urlGroups[randomNum].Groups[1].Value;
         }
 
         private static string ExtractInitState(string raw)
@@ -82,13 +98,6 @@ namespace M3u8Downloader_H._555dd7.plugin.Streams
                 throw new InvalidDataException("没有获取到网页关键数据");
 
             return initState;
-        }
-
-        private string GetEncryptData(WsRequestMessage message)
-        {
-            var MessageContentBytes = message.ToString().ToBytes();
-            var encryptedData = MessageContentBytes.AesEncrypt(_key, _iv);
-            return encryptedData.GetHexString();
         }
     }
 }
