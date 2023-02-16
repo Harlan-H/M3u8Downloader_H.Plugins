@@ -8,7 +8,7 @@ namespace M3u8Downloader_H._555dd7.plugin.Models
 
         public Data? Data { get; set; }
 
-        [JsonProperty("message")]
+        [JsonProperty("msg")]
         public string? Msg { get; set; }
     }
 
