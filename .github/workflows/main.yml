@@ -1,44 +1,52 @@
 name: main
 
 on: 
-  push:
-    branches:
-      - master
-    tags:
-      - "*"
+  repository_dispatch:
+    types: [plugin_release]
         
 jobs:
   build:
     runs-on: ubuntu-latest
-  
+
     env:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
       DOTNET_NOLOGO: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
-    
-    
+
+    permissions:
+      contents: write
+  
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
 
       - name: Install .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 6.0.x
-    
-      - name: Publish
-        run: | 
-          mkdir release
-          chmod 755 buildall.sh
-          ./buildall.sh release
+          dotnet-version: 10.0.x
+
+      - name: Run builder
+        env:
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: dotnet run --project M3u8Downloader_H.Plugins
         
-      - name: Create release
-        if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
-        uses: softprops/action-gh-release@v1
-        with:
-          body: |
-            - [更新日志](https://github.com/Harlan-H/M3u8Downloader_H.Plugins/blob/master/Changelog.md)
-          draft: false
-          prerelease: false
-          files:  release/*.zip
+      - name: setup git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: change database
+        run: |
+          git add data/
+          git status
+          git commit --allow-empty -m "Update database" -m "Committed by github-actions[bot] via [update](https://github.com/Harlan-H/TestAction/actions/runs/${{ github.run_id }}) workflow." --no-verify
+
+      - name: commit changes to readme.md
+        run: |
+          git add README.md
+          git status
+          git commit --allow-empty -m "Update README.md" -m "Committed by github-actions[bot] via [update](https://github.com/Harlan-H/TestAction/actions/runs/${{ github.run_id }}) workflow." --no-verify
+
+      - name: push all changes to the repository
+        run: git push
               
