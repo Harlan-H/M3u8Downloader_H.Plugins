@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32929.385
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11626.88 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M3u8Downloader_H.Plugins", "M3u8Downloader_H.Plugins\M3u8Downloader_H.Plugins.csproj", "{4D74E755-DEB5-4041-B18E-3FBAA2344559}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M3u8Downloader_H.ManifestTool", "M3u8Downloader_H.ManifestTool\M3u8Downloader_H.ManifestTool.csproj", "{115F67AA-6A9B-4009-9C8B-66580D758EFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M3u8Downloader_H.Attributes", "M3u8Downloader_H.Attributes\M3u8Downloader_H.Attributes.csproj", "{AEBE8697-128F-4005-A616-139B4EF88CBB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{4D74E755-DEB5-4041-B18E-3FBAA2344559}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D74E755-DEB5-4041-B18E-3FBAA2344559}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D74E755-DEB5-4041-B18E-3FBAA2344559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{115F67AA-6A9B-4009-9C8B-66580D758EFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{115F67AA-6A9B-4009-9C8B-66580D758EFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{115F67AA-6A9B-4009-9C8B-66580D758EFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{115F67AA-6A9B-4009-9C8B-66580D758EFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEBE8697-128F-4005-A616-139B4EF88CBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEBE8697-128F-4005-A616-139B4EF88CBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEBE8697-128F-4005-A616-139B4EF88CBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEBE8697-128F-4005-A616-139B4EF88CBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

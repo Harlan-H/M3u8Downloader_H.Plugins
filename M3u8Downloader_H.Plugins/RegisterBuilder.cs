@@ -100,7 +100,7 @@ public class RegisterBuilder
         foreach (var item in data.DispatchPayloads)
         {
             writer.Write('|');
-            writer.Write($"[{item.Manifest.Title}]({item.Manifest.Repo.AbsoluteUri})");
+            writer.Write($"[{item.Manifest.Title}]({item.Manifest.Repo})");
             writer.Write('|');
             writer.Write(item.Manifest.Description);
             writer.Write('|');
