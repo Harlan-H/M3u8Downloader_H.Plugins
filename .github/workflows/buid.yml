@@ -20,20 +20,20 @@ jobs:
                     - osx-arm64
 
                 include:
-                - rid: win-x64
-                    os: windows-latest
-                - rid: win-x86
-                    os: windows-latest
-                - rid: win-arm64
-                    os: windows-latest
+                    - rid: win-x64
+                        os: windows-latest
+                    - rid: win-x86
+                        os: windows-latest
+                    - rid: win-arm64
+                        os: windows-latest
 
-                - rid: linux-x64
-                    os: ubuntu-latest
+                    - rid: linux-x64
+                        os: ubuntu-latest
 
-                - rid: osx-x64
-                    os: macos-latest
-                - rid: osx-arm64
-                    os: macos-latest
+                    - rid: osx-x64
+                        os: macos-latest
+                    - rid: osx-arm64
+                        os: macos-latest
 
 
     runs-on: ${{ matrix.os }}
@@ -88,30 +88,30 @@ jobs:
         strategy:
             matrix:
                 rid:
-                - win-x64
-                - win-x86
-                - win-arm64
-                - linux-x64
-                - osx-x64
-                - osx-arm64
-        
+                    - win-x64
+                    - win-x86
+                    - win-arm64
+                    - linux-x64
+                    - osx-x64
+                    - osx-arm64
+            
         
                 include:
-                - rid: win-x64
-                    os: windows-latest
-                - rid: win-x86
-                    os: windows-latest
-                - rid: win-arm64
-                    os: windows-latest
-        
-                - rid: linux-x64
-                    os: ubuntu-latest
-        
-                - rid: osx-x64
-                    os: macos-latest
-                - rid: osx-arm64
-                    os: macos-latest
-        
+                    - rid: win-x64
+                        os: windows-latest
+                    - rid: win-x86
+                        os: windows-latest
+                    - rid: win-arm64
+                        os: windows-latest
+            
+                    - rid: linux-x64
+                        os: ubuntu-latest
+            
+                    - rid: osx-x64
+                        os: macos-latest
+                    - rid: osx-arm64
+                        os: macos-latest
+            
 
     runs-on: ubuntu-latest
     permissions:
