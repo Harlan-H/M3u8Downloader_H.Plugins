@@ -55,10 +55,9 @@ namespace M3u8Downloader_H.ManifestTool
 
             var key = string.IsNullOrEmpty(dllKey) ? assembly.GetName().Name!.ToLower(): dllKey;
 
-
             var version = FileVersionInfo
                 .GetVersionInfo(dllPath)
-                .FileVersion ?? "1.0.0";
+                .ProductVersion ?? "1.0.0";
 
 
             bool hasUI = !string.IsNullOrEmpty(hasui) && Convert.ToBoolean(hasui);

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "M3u8Downloader_H.ManifestTool": {
-      "commandName": "Project",
-      "commandLineArgs": "\"D:\\Documents\\Visual Studio 18\\Project\\M3u8Downloader_H.bilibili\\M3u8Downloader_H.bilibili\\bin\\Debug\\net10.0\\M3u8Downloader_H.bilibili.dll\""
-    }
-  }
-}

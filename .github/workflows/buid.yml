@@ -1,0 +1,144 @@
+name: build manifestTool
+
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号'
+        required: true
+
+jobs:
+    package:
+        strategy:
+            matrix:
+                rid:
+                    - win-x64
+                    - win-x86
+                    - win-arm64
+                    - linux-x64
+                    - osx-x64
+                    - osx-arm64
+
+                include:
+                - rid: win-x64
+                    os: windows-latest
+                - rid: win-x86
+                    os: windows-latest
+                - rid: win-arm64
+                    os: windows-latest
+
+                - rid: linux-x64
+                    os: ubuntu-latest
+
+                - rid: osx-x64
+                    os: macos-latest
+                - rid: osx-arm64
+                    os: macos-latest
+
+
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish
+        run: >
+          dotnet publish M3u8Downloader_H.ManifestTool
+          -o M3u8Downloader_H.ManifestTool/bin/Publish 
+          -c Release 
+          -r ${{ matrix.rid }}
+
+      - name: Upload artifacts 
+        uses: actions/upload-artifact@v6
+        with:
+          name: M3u8Downloader_H.ManifestTool-${{ matrix.rid }}
+          path: M3u8Downloader_H.ManifestTool/bin/Publish
+          if-no-files-found: error
+    
+
+    Release:
+        needs: package
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: write
+
+        steps:    
+          - name: Create release
+            shell: bash
+            env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            run: |
+                gh release create ${{ github.event.inputs.version }} \
+                --repo ${{ github.event.repository.full_name }} \
+                --title ${{ github.event.inputs.version }} \
+                --notes "此工具主要用于生成插件的详细信息"
+
+
+    deploy:
+        needs: Release
+        strategy:
+            matrix:
+                rid:
+                - win-x64
+                - win-x86
+                - win-arm64
+                - linux-x64
+                - osx-x64
+                - osx-arm64
+        
+        
+                include:
+                - rid: win-x64
+                    os: windows-latest
+                - rid: win-x86
+                    os: windows-latest
+                - rid: win-arm64
+                    os: windows-latest
+        
+                - rid: linux-x64
+                    os: ubuntu-latest
+        
+                - rid: osx-x64
+                    os: macos-latest
+                - rid: osx-arm64
+                    os: macos-latest
+        
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+
+    steps:
+      - name: Download artifacts normal
+        uses: actions/download-artifact@v8
+        with:
+          name: M3u8Downloader_H.ManifestTool-${{ matrix.rid }}
+          path: M3u8Downloader_H.ManifestTool
+            
+      - name: Set permissions
+        if: ${{ !startsWith(matrix.rid, 'win-') }}
+        run: |
+          [ -f M3u8Downloader_H.ManifestTool/M3u8Downloader_H.ManifestTool ] && chmod +x M3u8Downloader_H/M3u8Downloader_H  || true
+
+
+      - name: Create package
+        working-directory: M3u8Downloader_H/
+        run: zip -r ../M3u8Downloader_H.ManifestTool-${{ matrix.rid }}.zip .
+
+      - name: Upload release asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+            gh release upload ${{ github.event.inputs.version }} 
+            M3u8Downloader_H.ManifestTool-${{ matrix.rid }}.zip 
+            --repo ${{ github.event.repository.full_name }}            
