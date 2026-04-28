@@ -8,32 +8,32 @@ on:
         required: true
 
 jobs:
-    package:
-        strategy:
-            matrix:
-                rid:
-                    - win-x64
-                    - win-x86
-                    - win-arm64
-                    - linux-x64
-                    - osx-x64
-                    - osx-arm64
+  package:
+    strategy:
+      matrix:
+        rid:
+          - win-x64
+          - win-x86
+          - win-arm64
+          - linux-x64
+          - osx-x64
+          - osx-arm64
 
-                include:
-                    - rid: win-x64
-                        os: windows-latest
-                    - rid: win-x86
-                        os: windows-latest
-                    - rid: win-arm64
-                        os: windows-latest
+        include:
+          - rid: win-x64
+            os: windows-latest
+          - rid: win-x86
+            os: windows-latest
+          - rid: win-arm64
+            os: windows-latest
 
-                    - rid: linux-x64
-                        os: ubuntu-latest
+          - rid: linux-x64
+            os: ubuntu-latest
 
-                    - rid: osx-x64
-                        os: macos-latest
-                    - rid: osx-arm64
-                        os: macos-latest
+          - rid: osx-x64
+            os: macos-latest
+          - rid: osx-arm64
+            os: macos-latest
 
 
     runs-on: ${{ matrix.os }}
@@ -64,54 +64,55 @@ jobs:
           if-no-files-found: error
     
 
-    Release:
-        needs: package
-        runs-on: ubuntu-latest
+  Release:
+      needs: package
+      runs-on: ubuntu-latest
 
-        permissions:
-            contents: write
+      permissions:
+          contents: write
 
-        steps:    
-          - name: Create release
-            shell: bash
-            env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            run: |
-                gh release create ${{ github.event.inputs.version }} \
-                --repo ${{ github.event.repository.full_name }} \
-                --title ${{ github.event.inputs.version }} \
-                --notes "此工具主要用于生成插件的详细信息"
+      steps:    
+        - name: Create release
+          shell: bash
+          env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+              gh release create ${{ github.event.inputs.version }} \
+              --repo ${{ github.event.repository.full_name }} \
+              --title ${{ github.event.inputs.version }} \
+              --notes "此工具主要用于生成插件的详细信息"
 
 
-    deploy:
-        needs: Release
-        strategy:
-            matrix:
-                rid:
-                    - win-x64
-                    - win-x86
-                    - win-arm64
-                    - linux-x64
-                    - osx-x64
-                    - osx-arm64
-            
-        
-                include:
-                    - rid: win-x64
-                        os: windows-latest
-                    - rid: win-x86
-                        os: windows-latest
-                    - rid: win-arm64
-                        os: windows-latest
-            
-                    - rid: linux-x64
-                        os: ubuntu-latest
-            
-                    - rid: osx-x64
-                        os: macos-latest
-                    - rid: osx-arm64
-                        os: macos-latest
-            
+  deploy:
+    needs: Release
+
+    strategy:
+      matrix:
+        rid:
+          - win-x64
+          - win-x86
+          - win-arm64
+          - linux-x64
+          - osx-x64
+          - osx-arm64
+  
+
+        include:
+          - rid: win-x64
+            os: windows-latest
+          - rid: win-x86
+            os: windows-latest
+          - rid: win-arm64
+            os: windows-latest
+  
+          - rid: linux-x64
+            os: ubuntu-latest
+  
+          - rid: osx-x64
+            os: macos-latest
+          - rid: osx-arm64
+            os: macos-latest
+              
 
     runs-on: ubuntu-latest
     permissions:
