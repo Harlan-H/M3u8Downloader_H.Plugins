@@ -59,6 +59,8 @@ namespace M3u8Downloader_H.ManifestTool
                 .GetVersionInfo(dllPath)
                 .ProductVersion ?? "1.0.0";
 
+            if (version.Contains('+'))
+                version = version[..version.IndexOf('+')];
 
             bool hasUI = !string.IsNullOrEmpty(hasui) && Convert.ToBoolean(hasui);
             bool hasDownload = !string.IsNullOrEmpty(hasdownload) && Convert.ToBoolean(hasdownload);
