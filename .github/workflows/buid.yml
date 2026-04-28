@@ -129,11 +129,11 @@ jobs:
       - name: Set permissions
         if: ${{ !startsWith(matrix.rid, 'win-') }}
         run: |
-          [ -f M3u8Downloader_H.ManifestTool/M3u8Downloader_H.ManifestTool ] && chmod +x M3u8Downloader_H/M3u8Downloader_H  || true
+          [ -f M3u8Downloader_H.ManifestTool/M3u8Downloader_H.ManifestTool ] && chmod +x M3u8Downloader_H.ManifestTool/M3u8Downloader_H.ManifestTool  || true
 
 
       - name: Create package
-        working-directory: M3u8Downloader_H/
+        working-directory: M3u8Downloader_H.ManifestTool/
         run: zip -r ../M3u8Downloader_H.ManifestTool-${{ matrix.rid }}.zip .
 
       - name: Upload release asset
