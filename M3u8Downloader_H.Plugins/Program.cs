@@ -7,7 +7,7 @@ class Program
 {
     static readonly JsonSerializerOptions JsonOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true,
     }; 
     
     static void Main(string[] args)

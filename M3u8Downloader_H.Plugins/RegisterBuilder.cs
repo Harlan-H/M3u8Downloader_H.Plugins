@@ -13,7 +13,7 @@ public class RegisterBuilder
 
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        PropertyNameCaseInsensitive = true
     };
     
     public RegisterBuilder(DispatchPayload payload)
@@ -52,7 +52,7 @@ public class RegisterBuilder
                 Runtime =  _payload.Runtime
             });
             
-        data.Versions = data.Versions.OrderByDescending(r => r.Release.Version).ToList();
+        data.Versions = [.. data.Versions.OrderByDescending(r => r.Release.Version)];
         
         File.WriteAllText(file, JsonSerializer.Serialize(data, _jsonOptions));
     }
