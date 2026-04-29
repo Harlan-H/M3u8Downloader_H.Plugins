@@ -7,4 +7,4 @@
 
 |名字|描述|当前版本|更新时间|
 |:--:|:--:|:--:|:--:|
-|[b站](https://github.com/Harlan-H/M3u8Downloader_H.bilibili)|主要支持b站的视频下载方案|1.0.1|04/28/2026 23:21:07|
+|[b站](https://github.com/Harlan-H/M3u8Downloader_H.bilibili)|主要支持b站的视频下载方案|1.0.2|04/29/2026 20:29:20|
