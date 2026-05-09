@@ -7,4 +7,5 @@
 
 |名字|描述|当前版本|更新时间|
 |:--:|:--:|:--:|:--:|
+|[批量下载](https://github.com/Harlan-H/M3u8Downloader_H.BulkDownload)|主要用于m3u8视频的批量下载|1.0.0|05/09/2026 20:48:39|
 |[b站](https://github.com/Harlan-H/M3u8Downloader_H.bilibili)|b站的bv系列视频下载|1.0.3|05/04/2026 22:06:45|
