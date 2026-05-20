@@ -8,7 +8,6 @@ namespace M3u8Downloader_H.Attributes.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class PluginAttribute(string title, string description, string author, string appVersion) : Attribute
     {
-        public string Key { get; set; } = string.Empty;
         public string Title { get; } = title;
         public string Description { get; } = description;
         public string Author { get; } = author;

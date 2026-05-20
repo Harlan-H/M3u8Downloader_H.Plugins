@@ -49,11 +49,10 @@ namespace M3u8Downloader_H.ManifestTool
             var author = ctorArgs[2].Value?.ToString() ?? "";
             var appVersion = ctorArgs[3].Value?.ToString() ?? "";
 
-            var dllKey = attrData.NamedArguments.FirstOrDefault(n => n.MemberName == "Key").TypedValue.Value?.ToString();
             var hasui = attrData.NamedArguments.FirstOrDefault(n => n.MemberName == "HasUi").TypedValue.Value?.ToString();
             var hasdownload = attrData.NamedArguments.FirstOrDefault(n => n.MemberName == "HasDownload").TypedValue.Value?.ToString();
 
-            var key = string.IsNullOrEmpty(dllKey) ? assembly.GetName().Name!.ToLower(): dllKey;
+            var key =  assembly.GetName().Name!.ToLower();
 
             var version = FileVersionInfo
                 .GetVersionInfo(dllPath)
