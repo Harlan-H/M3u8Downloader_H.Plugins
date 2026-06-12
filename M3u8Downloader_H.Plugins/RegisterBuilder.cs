@@ -95,8 +95,8 @@ public class RegisterBuilder
         writer.Flush();
         
         writer.WriteLine(writer.NewLine);
-        writer.WriteLine("|名字|描述|当前版本|更新时间|");
-        writer.WriteLine("|:--:|:--:|:--:|:--:|");
+        writer.WriteLine("|名字|描述|当前版本|更新时间||");
+        writer.WriteLine("|:--:|:--:|:--:|:--:|:--:|");
         foreach (var item in data.DispatchPayloads)
         {
             writer.Write('|');
@@ -107,6 +107,8 @@ public class RegisterBuilder
             writer.Write(item.Release.Version);
             writer.Write('|');
             writer.Write(item.Manifest.Time);
+            writer.Write('|');
+            writer.Write($"[下载]({item.Release.DownloadUrl})");
             writer.WriteLine("|");
         }
     }
