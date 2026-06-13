@@ -3,7 +3,9 @@
 
 # 在线更新步骤
 1. 在下面表格中选择你需要下载的插件
-2. 在主程序新建Plugins文件夹,如已有可忽略
+2. 新建Plugins文件夹,如已有可忽略
+    - win/linux: 主程序位置直接新建即可
+    - mac : 在 ~/Library/Application Support/M3u8Downloader_H  文件夹下新建
 3. 将下载好的插件直接复制Plugins目录,不要解压,不要解压,不要解压!!
 4. 启动程序在本地插件中启用插件
 
